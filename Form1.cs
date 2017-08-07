@@ -27,7 +27,7 @@ namespace NewAdUser {
 
     private void SetupVars() {
       this.StartupSplash.Status = "Получаем список доменов";
-      comboBoxDomain.DataSource = Enum.GetValues(typeof(Helpers.AdDomain));
+      comboBoxAdDomain.DataSource = Enum.GetValues(typeof(Helpers.AdDomain));
       this.StartupSplash.Status = "Получаем список почтовых доменов";
       comboBoxMailDomain.DataSource = Enum.GetValues(typeof(Helpers.MailDomain));
       this.StartupSplash.Status = "Получаем список инстансов в сети";
@@ -222,7 +222,7 @@ namespace NewAdUser {
     private void ButtonAddKbUser_Click(object sender, EventArgs e) {
       if (!(this.listBoxRoles.SelectedItems.Count > 0 && this.listBoxMenu.SelectedItems.Count > 0)) { MessageBox.Show("Надо выбрать хотябы одну роль и меню.", "Внимание!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); return; }
       string s = String.Empty;
-      s += $"Добавляем пользователя {this.textBoxLogin.Text}@{this.comboBoxDomain.Text} на сервере {((Helpers.SqlInstance)this.comboBoxInstances.SelectedItem).InstanceFullName}{Environment.NewLine}";
+      s += $"Добавляем пользователя {this.textBoxLogin.Text}@{this.comboBoxAdDomain.Text} на сервере {((Helpers.SqlInstance)this.comboBoxInstances.SelectedItem).InstanceFullName}{Environment.NewLine}";
       s += "Даём ему роль:";
       foreach (Roles item in this.listBoxRoles.SelectedItems) {
         s += $"{item.RoleName},{Environment.NewLine}";
@@ -233,7 +233,7 @@ namespace NewAdUser {
       }
       DialogResult mbx = MessageBox.Show(s, "Добавляем?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
       if (mbx != DialogResult.Yes) return;
-      string login = $"{ this.comboBoxDomain.SelectedText }\\{ this.textBoxLogin.Text}";
+      string login = $"{ this.comboBoxAdDomain.SelectedText }\\{ this.textBoxLogin.Text}";
       AddUserToSql(login);
       AddUserToDB(login);
     }
@@ -263,12 +263,12 @@ namespace NewAdUser {
 
       //AdUser NewUser = new AdUser(this.textBoxLogin.Text,this.textBoxLogin.Text + "@" + this.comboBoxDomain.SelectedItem,this.textBoxName.Text, this.textBoxSecondName.Text,this.textBoxSurName.Text);
 
-      AdUser NewUser = new AdUser(this.textBoxLogin.Text,this.textBoxName.Text,this.textBoxSecondName.Text,this.textBoxSurName.Text,(Helpers.AdDomain)this.comboBoxDomain.SelectedItem);
+      AdUser NewUser = new AdUser(this.textBoxLogin.Text,this.textBoxName.Text,this.textBoxSecondName.Text,this.textBoxSurName.Text,(Helpers.AdDomain)this.comboBoxAdDomain.SelectedIndex);
 
 
       if (!this.checkBoxPassword.Checked) NewUser.password = this.textBoxUserPassword.Text;
 
-      Helpers.addADUser(NewUser, (Helpers.AdDomain)this.comboBoxDomain.SelectedItem, credentials);
+      //Helpers.addADUser(NewUser, (Helpers.AdDomain)this.comboBoxDomain.SelectedItem, credentials);
 
 
 
