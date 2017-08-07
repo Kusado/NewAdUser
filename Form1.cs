@@ -19,7 +19,7 @@ namespace NewAdUser {
     private SqlConnection Sql;
 
     public Form1() {
-      StartupSplash = Splash.ShowSplash();
+      this.StartupSplash = Splash.ShowSplash();
       InitializeComponent();
       SetupVars();
       this.StartupSplash.Status = "Рисуем форму";
@@ -27,22 +27,22 @@ namespace NewAdUser {
 
     private void SetupVars() {
       this.StartupSplash.Status = "Получаем список доменов";
-      comboBoxAdDomain.DataSource = Enum.GetValues(typeof(Helpers.AdDomain));
+      this.comboBoxAdDomain.DataSource = Enum.GetValues(typeof(Domains.ActiveDirectory));
       this.StartupSplash.Status = "Получаем список почтовых доменов";
-      comboBoxMailDomain.DataSource = Enum.GetValues(typeof(Helpers.MailDomain));
+      this.comboBoxMailDomain.DataSource = Enum.GetValues(typeof(Domains.ActiveDirectory));
       this.StartupSplash.Status = "Получаем список инстансов в сети";
-      //this.SqlInstances = GetSqlServersFromNetwork();
-      //this.comboBoxInstances.DataSource = this.SqlInstances;
-      //this.comboBoxInstances.DisplayMember = "InstanceFullName";
-      //this.comboBoxInstances.SelectedIndex = -1;
+      this.SqlInstances = Helpers.GetSqlServersFromNetwork(test: true);
+      this.comboBoxInstances.DataSource = this.SqlInstances;
+      this.comboBoxInstances.DisplayMember = "InstanceFullName";
+      this.comboBoxInstances.SelectedIndex = -1;
       this.checkBoxAddMail.Checked = true;
       this.checkBoxPassword.Checked = true;
       checkBox1_CheckedChanged(null, null);
       checkBoxAddMail_CheckedChanged(null, null);
+      this.TransType = Helpers.TransliterationType.Gost;
     }
 
     private void Form1_Load(object sender, EventArgs e) {
-      TransType = Helpers.TransliterationType.Gost;
     }
 
     private void textBoxLastname_TextChanged(object sender, EventArgs e) {
@@ -60,20 +60,20 @@ namespace NewAdUser {
     }
 
     private void SetFullName() {
-      textBoxFullname.Text = ComposeFullName();
+      this.textBoxFullname.Text = ComposeFullName();
     }
 
     private void SetLogin() {
-      textBoxLogin.Text = ComposeLogin();
+      this.textBoxLogin.Text = ComposeLogin();
     }
 
     private string ComposeLogin() {
       string result = string.Empty;
-      if (!string.IsNullOrEmpty(textBoxName.Text)) {
-        result += Helpers.Transliteration.Front(textBoxName.Text.Substring(0, 1), TransType);
+      if (!string.IsNullOrEmpty(this.textBoxName.Text)) {
+        result += Helpers.Transliteration.Front(this.textBoxName.Text.Substring(0, 1), this.TransType);
       }
-      if (!string.IsNullOrEmpty(textBoxSurName.Text)) {
-        result += Helpers.Transliteration.Front(textBoxSurName.Text, TransType);
+      if (!string.IsNullOrEmpty(this.textBoxSurName.Text)) {
+        result += Helpers.Transliteration.Front(this.textBoxSurName.Text, this.TransType);
       }
 
       return result;
@@ -81,35 +81,35 @@ namespace NewAdUser {
 
     private string ComposeFullName() {
       string result = string.Empty;
-      if (!string.IsNullOrEmpty(textBoxSurName.Text)) {
-        result += $"{textBoxSurName.Text}";
+      if (!string.IsNullOrEmpty(this.textBoxSurName.Text)) {
+        result += $"{this.textBoxSurName.Text}";
       }
-      if (!string.IsNullOrEmpty(textBoxName.Text)) {
-        result += $" {textBoxName.Text}";
+      if (!string.IsNullOrEmpty(this.textBoxName.Text)) {
+        result += $" {this.textBoxName.Text}";
       }
-      if (!string.IsNullOrEmpty(textBoxSecondName.Text)) {
-        result += $" {textBoxSecondName.Text}";
+      if (!string.IsNullOrEmpty(this.textBoxSecondName.Text)) {
+        result += $" {this.textBoxSecondName.Text}";
       }
       return result;
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e) {
-      textBoxUserPassword.Enabled = !checkBoxPassword.Checked;
-      textBoxUserPassword.Text = checkBoxPassword.Checked ? DefaultPassword : String.Empty;
+      this.textBoxUserPassword.Enabled = !this.checkBoxPassword.Checked;
+      this.textBoxUserPassword.Text = this.checkBoxPassword.Checked ? DefaultPassword : String.Empty;
     }
 
     private void gOSTToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
       if (sender is ToolStripMenuItem m) {
         if (m.Checked) {
           ChangeTransitType(Helpers.TransliterationType.Gost);
-          gOSTToolStripMenuItem.Checked = true;
-          iSOToolStripMenuItem.Checked = !gOSTToolStripMenuItem.Checked;
+          this.gOSTToolStripMenuItem.Checked = true;
+          this.iSOToolStripMenuItem.Checked = !this.gOSTToolStripMenuItem.Checked;
         }
       }
     }
 
     private void ChangeTransitType(Helpers.TransliterationType tType) {
-      TransType = tType;
+      this.TransType = tType;
       SetLogin();
     }
 
@@ -117,8 +117,8 @@ namespace NewAdUser {
       if (sender is ToolStripMenuItem m) {
         if (m.Checked) {
           ChangeTransitType(Helpers.TransliterationType.ISO);
-          iSOToolStripMenuItem.Checked = true;
-          gOSTToolStripMenuItem.Checked = false;
+          this.iSOToolStripMenuItem.Checked = true;
+          this.gOSTToolStripMenuItem.Checked = false;
         }
       }
     }
@@ -129,8 +129,8 @@ namespace NewAdUser {
 
     private void Form1_Shown(object sender, EventArgs e) {
       this.StartupSplash.CloseSplash();
-      this.Focus();
-      this.Activate();
+      Focus();
+      Activate();
       this.FormLoaded = true;
     }
 
@@ -208,7 +208,7 @@ namespace NewAdUser {
       return result;
     }
 
-    public static T ConvertToTypedDataTable<T>(System.Data.DataTable dtBase) where T : DataTable, new() {
+    public static T ConvertToTypedDataTable<T>(DataTable dtBase) where T : DataTable, new() {
       T dtTyped = new T();
       dtTyped.Merge(dtBase);
 
@@ -216,7 +216,7 @@ namespace NewAdUser {
     }
 
     private void buttonExit_Click(object sender, EventArgs e) {
-      this.Close();
+      Close();
     }
 
     private void ButtonAddKbUser_Click(object sender, EventArgs e) {
@@ -251,7 +251,6 @@ namespace NewAdUser {
     }
 
     private void buttonAddUser_Click(object sender, EventArgs e) {
-
       string runasUsername = @"radarias\iabramov";
       string runasPassword = "*********";
 
@@ -263,15 +262,11 @@ namespace NewAdUser {
 
       //AdUser NewUser = new AdUser(this.textBoxLogin.Text,this.textBoxLogin.Text + "@" + this.comboBoxDomain.SelectedItem,this.textBoxName.Text, this.textBoxSecondName.Text,this.textBoxSurName.Text);
 
-      AdUser NewUser = new AdUser(this.textBoxLogin.Text,this.textBoxName.Text,this.textBoxSecondName.Text,this.textBoxSurName.Text,(Helpers.AdDomain)this.comboBoxAdDomain.SelectedIndex);
-
+      AdUser NewUser = new AdUser(this.textBoxLogin.Text, this.textBoxName.Text, this.textBoxSecondName.Text, this.textBoxSurName.Text, (Domains.ActiveDirectory)this.comboBoxAdDomain.SelectedIndex);
 
       if (!this.checkBoxPassword.Checked) NewUser.password = this.textBoxUserPassword.Text;
 
-      //Helpers.addADUser(NewUser, (Helpers.AdDomain)this.comboBoxDomain.SelectedItem, credentials);
-
-
-
+      Helpers.addADUser(NewUser, credentials);
     }
   }
 }

@@ -51,23 +51,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DBClasses.cs" />
-    <Compile Include="DT2Class.cs" />
+    <Compile Include="Classes\DBClasses.cs" />
+    <Compile Include="Classes\Domains.cs" />
+    <Compile Include="Classes\DT2Class.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helpers.cs" />
-    <Compile Include="posh.cs" />
+    <Compile Include="Classes\AdUser.cs" />
+    <Compile Include="Classes\Helpers\Helpers.cs" />
+    <Compile Include="Classes\Helpers\NS.cs" />
+    <Compile Include="Classes\Helpers\posh.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Splash.cs">
+    <Compile Include="Classes\Helpers\Splash.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Splash.Designer.cs" />
-    <Compile Include="Transliteration.cs" />
+    <Compile Include="Classes\Helpers\Splash.Designer.cs" />
+    <Compile Include="Classes\Helpers\Transliteration.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -80,7 +83,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Splash.resx" />
+    <EmbeddedResource Include="Classes\Helpers\Splash.resx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -101,7 +104,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_UseGlobalSettings="True" />
+      <UserProperties BuildVersion_UseGlobalSettings="True" BuildVersion_StartDate="2000/1/1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

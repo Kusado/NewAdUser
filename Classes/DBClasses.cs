@@ -61,5 +61,5 @@ namespace NewAdUser {
     public Boolean ShowFilterControl { get; set; }
 
     #endregion Instance Properties
-}
+  }
 }

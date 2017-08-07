@@ -14,7 +14,7 @@ namespace Helpers {
       get { return this._status; }
       set {
         this._status = value;
-        if (this.Created) this.Invoke((MethodInvoker)delegate { this.label2.Text = this._status; });
+        if (this.Created) Invoke((MethodInvoker)delegate { this.label2.Text = this._status; });
       }
     }
 
@@ -35,7 +35,7 @@ namespace Helpers {
       this.label3.BackColor = Color.Transparent;
       this.label3.ForeColor = labelColor;
 
-      Status = String.Empty;
+      this.Status = String.Empty;
     }
 
     //private MainForm mainForm{ get; set; }
@@ -55,16 +55,16 @@ namespace Helpers {
     }
 
     private void _showSplash() {
-      this.BringToFront();
-      this.ShowDialog();
+      BringToFront();
+      ShowDialog();
     }
 
     public void CloseSplash() {
-      this.Invoke((MethodInvoker)delegate { this.Close(); });
+      Invoke((MethodInvoker)delegate { Close(); });
     }
 
     private void ButtonCancel_Click(object sender, EventArgs e) {
-      this.Close();
+      Close();
     }
 
     private void Splash_FormClosing(object sender, FormClosingEventArgs e) {
