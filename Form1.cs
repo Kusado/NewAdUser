@@ -135,6 +135,7 @@ namespace NewAdUser {
     private void checkBoxAddMail_CheckedChanged(object sender, EventArgs e) {
       this.comboBoxMailDomain.Enabled = this.checkBoxAddMail.Checked;
       this.checkBoxOnlyMail.Enabled = this.checkBoxAddMail.Checked;
+      this.checkBoxOnlyMail.Checked = false;
     }
 
     private void Form1_Shown(object sender, EventArgs e) {
@@ -189,75 +190,8 @@ namespace NewAdUser {
       }
     }
 
-    private List<Roles> GetRoles(SqlInstance instance) {
-      List<Roles> result = new List<Roles>();
-      string query = @"SELECT * FROM [KB].[dbo].[Roles]";
-      DataTable dt = SqlInstance.GetSqlDataTable(query, this.Sql);
-      try {
-        result = dt.ToList<Roles>();
-      }
-      catch (Exception e) {
-        Console.WriteLine(e);
-        throw;
-      }
-      return result;
-    }
-
-    private List<KBMenu> GetMenus(SqlInstance instance) {
-      List<KBMenu> result = new List<KBMenu>();
-      string query = @"SELECT * FROM [KB].[dbo].[Menu] where IdMenuType = 4";
-      DataTable dt = SqlInstance.GetSqlDataTable(query, this.Sql);
-      try {
-        result = dt.ToList<KBMenu>();
-      }
-      catch (Exception e) {
-        Console.WriteLine(e);
-        throw;
-      }
-
-      return result;
-    }
-
-    public static T ConvertToTypedDataTable<T>(DataTable dtBase) where T : DataTable, new() {
-      T dtTyped = new T();
-      dtTyped.Merge(dtBase);
-
-      return dtTyped;
-    }
-
     private void buttonExit_Click(object sender, EventArgs e) {
       Close();
-    }
-
-    private void ButtonAddKbUser_Click(object sender, EventArgs e) {
-      if (!(this.listBoxRoles.SelectedItems.Count > 0 && this.listBoxMenu.SelectedItems.Count > 0)) { MessageBox.Show("Надо выбрать хотябы одну роль и меню.", "Внимание!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); return; }
-      string s = String.Empty;
-      s += $"Добавляем пользователя {this.textBoxLogin.Text}@{this.comboBoxAdDomain.Text} на сервере {((SqlInstance)this.comboBoxInstances.SelectedItem).InstanceFullName}{Environment.NewLine}";
-      s += "Даём ему роль:";
-      foreach (Roles item in this.listBoxRoles.SelectedItems) {
-        s += $"{item.RoleName},{Environment.NewLine}";
-      }
-      s += "Включаем ему меню:";
-      foreach (KBMenu item in this.listBoxMenu.SelectedItems) {
-        s += $"{item.MenuName},{Environment.NewLine}";
-      }
-      DialogResult mbx = MessageBox.Show(s, "Добавляем?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-      if (mbx != DialogResult.Yes) return;
-      string login = $"{ this.comboBoxAdDomain.SelectedText }\\{ this.textBoxLogin.Text}";
-      AddUserToSql(login);
-      AddUserToDB(login);
-    }
-
-    private void AddUserToSql(string login) {
-      string query = $"IF NOT EXISTS(SELECT loginname FROM sys.syslogins WHERE loginname = '{login}') EXEC sp_grantlogin '{login}'";
-      SqlCommand cmd = new SqlCommand(query, this.Sql);
-      cmd.ExecuteNonQuery();
-    }
-
-    private void AddUserToDB(string login) {
-      string query = $"IF NOT EXISTS(SELECT * FROM sys.database_principals WHERE name = '{login}') CREATE USER [{login}] FOR LOGIN [{login}]";
-      SqlCommand cmd = new SqlCommand(query, this.Sql);
-      cmd.ExecuteNonQuery();
     }
 
     private void buttonAddUser_Click(object sender, EventArgs e) {
@@ -294,7 +228,7 @@ namespace NewAdUser {
       if (!this.checkBoxPassword.Checked) NewUser.Password = this.textBoxUserPassword.Text;
 
       splash.Status = "Начинаем создание пользователя.";
-      if (this.checkBoxOnlyMail.Enabled && !this.checkBoxOnlyMail.Checked) {
+      if (!this.checkBoxOnlyMail.Checked) {
         Helpers.AddADUser(NewUser, credentials, splash);
       }
 

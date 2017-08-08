@@ -20,8 +20,8 @@ namespace NewAdUser {
       this.DictMailFQDN = new Dictionary<MailDomain, string> {
         {MailDomain.Formulabi, "formulabi.ru"},
         {MailDomain.Radar, "radarias.ru"},
-        {MailDomain.ExHelp, "ex-help.ru"},
-        {MailDomain.SherpSoft, "sherpsoft.ru"}
+        //{MailDomain.ExHelp, "ex-help.ru"},
+        //{MailDomain.SherpSoft, "sherpsoft.ru"}
       };
       this.DictAdFQDN = new Dictionary<AdDomain, string> {
         {AdDomain.Formulabi, "formulabi.local"},
@@ -37,7 +37,7 @@ namespace NewAdUser {
       };
       this.DictLoginOUs = new Dictionary<AdDomain, string> {
         {AdDomain.Formulabi, "OU=AutoCreated,OU=Пользователи,OU=FormulaBI,DC=FormulaBI,DC=local" },
-        {AdDomain.Radarias, "OU=test,OU=Users,OU=radarias,DC=radarias,DC=local" },
+        {AdDomain.Radarias, "OU=AutoCreated,OU=Users,OU=radarias,DC=radarias,DC=local" },
       };
     }
 
@@ -49,8 +49,8 @@ namespace NewAdUser {
     public enum MailDomain {
       Formulabi = 0,
       Radar,
-      ExHelp,
-      SherpSoft
+      //ExHelp,
+      //SherpSoft
     }
   }
 }

@@ -24,6 +24,7 @@
       /// </summary>
       private void InitializeComponent() {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
       this.textBoxSurName = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
@@ -45,6 +46,7 @@
       this.comboBoxAdDomain = new System.Windows.Forms.ComboBox();
       this.comboBoxMailDomain = new System.Windows.Forms.ComboBox();
       this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+      this.checkBoxOnlyMail = new System.Windows.Forms.CheckBox();
       this.checkBoxAddMail = new System.Windows.Forms.CheckBox();
       this.buttonAddUser = new System.Windows.Forms.Button();
       this.buttonAddKBUser = new System.Windows.Forms.Button();
@@ -55,7 +57,6 @@
       this.label10 = new System.Windows.Forms.Label();
       this.comboBoxInstances = new System.Windows.Forms.ComboBox();
       this.label9 = new System.Windows.Forms.Label();
-      this.checkBoxOnlyMail = new System.Windows.Forms.CheckBox();
       this.contextMenuTranslitType.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
       this.splitContainer1.Panel1.SuspendLayout();
@@ -69,7 +70,6 @@
       this.textBoxSurName.Name = "textBoxSurName";
       this.textBoxSurName.Size = new System.Drawing.Size(186, 20);
       this.textBoxSurName.TabIndex = 0;
-      this.textBoxSurName.Text = "фамилия";
       this.textBoxSurName.TextChanged += new System.EventHandler(this.textBoxLastname_TextChanged);
       // 
       // label1
@@ -93,8 +93,7 @@
       this.textBoxName.Location = new System.Drawing.Point(3, 64);
       this.textBoxName.Name = "textBoxName";
       this.textBoxName.Size = new System.Drawing.Size(186, 20);
-      this.textBoxName.TabIndex = 2;
-      this.textBoxName.Text = "имя";
+      this.textBoxName.TabIndex = 1;
       this.textBoxName.TextChanged += new System.EventHandler(this.textBoxName_TextChanged);
       // 
       // label3
@@ -110,8 +109,7 @@
       this.textBoxSecondName.Location = new System.Drawing.Point(3, 103);
       this.textBoxSecondName.Name = "textBoxSecondName";
       this.textBoxSecondName.Size = new System.Drawing.Size(186, 20);
-      this.textBoxSecondName.TabIndex = 4;
-      this.textBoxSecondName.Text = "отчество";
+      this.textBoxSecondName.TabIndex = 2;
       this.textBoxSecondName.TextChanged += new System.EventHandler(this.textBoxSurname_TextChanged);
       // 
       // label4
@@ -127,7 +125,8 @@
       this.textBoxFullname.Location = new System.Drawing.Point(3, 142);
       this.textBoxFullname.Name = "textBoxFullname";
       this.textBoxFullname.Size = new System.Drawing.Size(186, 20);
-      this.textBoxFullname.TabIndex = 6;
+      this.textBoxFullname.TabIndex = 19;
+      this.textBoxFullname.TabStop = false;
       // 
       // label5
       // 
@@ -167,7 +166,8 @@
       this.textBoxLogin.Location = new System.Drawing.Point(3, 178);
       this.textBoxLogin.Name = "textBoxLogin";
       this.textBoxLogin.Size = new System.Drawing.Size(186, 20);
-      this.textBoxLogin.TabIndex = 8;
+      this.textBoxLogin.TabIndex = 19;
+      this.textBoxLogin.TabStop = false;
       // 
       // contextMenuTranslitType
       // 
@@ -202,6 +202,7 @@
       this.textBoxUserPassword.Name = "textBoxUserPassword";
       this.textBoxUserPassword.Size = new System.Drawing.Size(119, 20);
       this.textBoxUserPassword.TabIndex = 14;
+      this.textBoxUserPassword.TabStop = false;
       this.textBoxUserPassword.UseSystemPasswordChar = true;
       // 
       // checkBoxPassword
@@ -213,6 +214,7 @@
       this.checkBoxPassword.Name = "checkBoxPassword";
       this.checkBoxPassword.Size = new System.Drawing.Size(58, 17);
       this.checkBoxPassword.TabIndex = 16;
+      this.checkBoxPassword.TabStop = false;
       this.checkBoxPassword.Text = "default";
       this.checkBoxPassword.UseVisualStyleBackColor = true;
       this.checkBoxPassword.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
@@ -224,7 +226,7 @@
       this.comboBoxAdDomain.Location = new System.Drawing.Point(3, 218);
       this.comboBoxAdDomain.Name = "comboBoxAdDomain";
       this.comboBoxAdDomain.Size = new System.Drawing.Size(186, 21);
-      this.comboBoxAdDomain.TabIndex = 17;
+      this.comboBoxAdDomain.TabIndex = 3;
       // 
       // comboBoxMailDomain
       // 
@@ -233,7 +235,7 @@
       this.comboBoxMailDomain.Location = new System.Drawing.Point(3, 255);
       this.comboBoxMailDomain.Name = "comboBoxMailDomain";
       this.comboBoxMailDomain.Size = new System.Drawing.Size(119, 21);
-      this.comboBoxMailDomain.TabIndex = 18;
+      this.comboBoxMailDomain.TabIndex = 4;
       // 
       // splitContainer1
       // 
@@ -277,6 +279,19 @@
       this.splitContainer1.Size = new System.Drawing.Size(408, 343);
       this.splitContainer1.SplitterDistance = 196;
       this.splitContainer1.TabIndex = 19;
+      this.splitContainer1.TabStop = false;
+      // 
+      // checkBoxOnlyMail
+      // 
+      this.checkBoxOnlyMail.AutoSize = true;
+      this.checkBoxOnlyMail.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.checkBoxOnlyMail.Location = new System.Drawing.Point(128, 275);
+      this.checkBoxOnlyMail.Name = "checkBoxOnlyMail";
+      this.checkBoxOnlyMail.Size = new System.Drawing.Size(72, 14);
+      this.checkBoxOnlyMail.TabIndex = 21;
+      this.checkBoxOnlyMail.TabStop = false;
+      this.checkBoxOnlyMail.Text = "ТолькоПочта";
+      this.checkBoxOnlyMail.UseVisualStyleBackColor = false;
       // 
       // checkBoxAddMail
       // 
@@ -287,6 +302,7 @@
       this.checkBoxAddMail.Name = "checkBoxAddMail";
       this.checkBoxAddMail.Size = new System.Drawing.Size(56, 17);
       this.checkBoxAddMail.TabIndex = 20;
+      this.checkBoxAddMail.TabStop = false;
       this.checkBoxAddMail.Text = "Почта";
       this.checkBoxAddMail.UseVisualStyleBackColor = true;
       this.checkBoxAddMail.CheckedChanged += new System.EventHandler(this.checkBoxAddMail_CheckedChanged);
@@ -297,7 +313,7 @@
       this.buttonAddUser.Location = new System.Drawing.Point(26, 317);
       this.buttonAddUser.Name = "buttonAddUser";
       this.buttonAddUser.Size = new System.Drawing.Size(139, 23);
-      this.buttonAddUser.TabIndex = 19;
+      this.buttonAddUser.TabIndex = 5;
       this.buttonAddUser.Text = "Добавить пользователя";
       this.buttonAddUser.UseVisualStyleBackColor = true;
       this.buttonAddUser.Click += new System.EventHandler(this.buttonAddUser_Click);
@@ -308,6 +324,7 @@
       this.buttonAddKBUser.Name = "buttonAddKBUser";
       this.buttonAddKBUser.Size = new System.Drawing.Size(186, 23);
       this.buttonAddKBUser.TabIndex = 27;
+      this.buttonAddKBUser.TabStop = false;
       this.buttonAddKBUser.Text = "Добавить пользователя Sherp";
       this.buttonAddKBUser.UseVisualStyleBackColor = true;
       this.buttonAddKBUser.Click += new System.EventHandler(this.ButtonAddKbUser_Click);
@@ -319,6 +336,7 @@
       this.buttonExit.Name = "buttonExit";
       this.buttonExit.Size = new System.Drawing.Size(75, 23);
       this.buttonExit.TabIndex = 26;
+      this.buttonExit.TabStop = false;
       this.buttonExit.Text = "Выход";
       this.buttonExit.UseVisualStyleBackColor = true;
       this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
@@ -332,6 +350,7 @@
       this.listBoxMenu.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
       this.listBoxMenu.Size = new System.Drawing.Size(186, 69);
       this.listBoxMenu.TabIndex = 25;
+      this.listBoxMenu.TabStop = false;
       // 
       // label11
       // 
@@ -350,6 +369,7 @@
       this.listBoxRoles.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
       this.listBoxRoles.Size = new System.Drawing.Size(186, 82);
       this.listBoxRoles.TabIndex = 23;
+      this.listBoxRoles.TabStop = false;
       // 
       // label10
       // 
@@ -367,6 +387,7 @@
       this.comboBoxInstances.Name = "comboBoxInstances";
       this.comboBoxInstances.Size = new System.Drawing.Size(186, 21);
       this.comboBoxInstances.TabIndex = 19;
+      this.comboBoxInstances.TabStop = false;
       this.comboBoxInstances.SelectedIndexChanged += new System.EventHandler(this.comboBoxInstances_SelectedIndexChanged);
       // 
       // label9
@@ -377,17 +398,6 @@
       this.label9.TabIndex = 18;
       this.label9.Text = "Инстанс";
       // 
-      // checkBoxOnlyMail
-      // 
-      this.checkBoxOnlyMail.AutoSize = true;
-      this.checkBoxOnlyMail.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.checkBoxOnlyMail.Location = new System.Drawing.Point(128, 275);
-      this.checkBoxOnlyMail.Name = "checkBoxOnlyMail";
-      this.checkBoxOnlyMail.Size = new System.Drawing.Size(72, 14);
-      this.checkBoxOnlyMail.TabIndex = 21;
-      this.checkBoxOnlyMail.Text = "ТолькоПочта";
-      this.checkBoxOnlyMail.UseVisualStyleBackColor = false;
-      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -395,8 +405,10 @@
       this.CancelButton = this.buttonExit;
       this.ClientSize = new System.Drawing.Size(408, 343);
       this.Controls.Add(this.splitContainer1);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
+      this.MinimizeBox = false;
       this.Name = "Form1";
       this.Text = "Добавление нового пользователя";
       this.Load += new System.EventHandler(this.Form1_Load);
