@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\AccountDetails.cs" />
     <Compile Include="Classes\DBClasses.cs" />
     <Compile Include="Classes\Domains.cs" />
     <Compile Include="Classes\DT2Class.cs" />

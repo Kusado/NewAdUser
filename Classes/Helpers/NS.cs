@@ -2,26 +2,20 @@ using System;
 using System.Net;
 
 namespace NewAdUser {
+
   public static class NS {
 
-    [Serializable]
     public class Host {
       public string FQDN { get; set; }
-
-      [NonSerialized]
-      public string Name;
-
-      [NonSerialized]
-      public string Domain;
-
-      [NonSerialized]
-      private IPAddress[] addresses;
+      public string Name { get; }
+      public string Domain { get; }
+      public IPAddress[] Addresses { get; }
 
       public override string ToString() {
         return this.FQDN;
       }
 
-      public static Host GetHostEntry(string NameOrIp) {
+      public static Host GetHost(string NameOrIp) {
         IPHostEntry ipHostEntry;
         try {
           ipHostEntry = Dns.GetHostEntry(NameOrIp);
@@ -43,19 +37,19 @@ namespace NewAdUser {
       }
 
       private Host(string FQDN) {
-        Host tmp = GetHostEntry(FQDN);
+        Host tmp = GetHost(FQDN);
         //foreach (PropertyInfo property in tmp.GetType().GetProperties(BindingFlags.DeclaredOnly)) {
         //  this.GetType().GetProperties().First(x => x.Name == property.Name)=property;
         //}
         this.FQDN = tmp.FQDN;
         this.Domain = tmp.Domain;
         this.Name = tmp.Name;
-        this.addresses = tmp.addresses;
+        this.Addresses = tmp.Addresses;
       }
 
       private Host(IPHostEntry ipHostEntry) {
         this.FQDN = ipHostEntry.HostName;
-        this.addresses = ipHostEntry.AddressList;
+        this.Addresses = ipHostEntry.AddressList;
         this.Name = this.FQDN.Substring(0, this.FQDN.IndexOf("."));
         this.Domain = this.FQDN.Remove(0, this.Name.Length + 1);
       }

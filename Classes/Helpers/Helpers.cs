@@ -1,91 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
+﻿using Helpers;
+using System;
 using System.Management.Automation;
 using System.Net.NetworkInformation;
-using System.ServiceProcess;
 
 namespace NewAdUser {
 
   public static partial class Helpers {
-
-    public static List<SqlInstance> GetSqlServersFromNetwork(bool debug = false) {
-      List<SqlInstance> sqlInstances = new List<SqlInstance>();
-      string output;
-      using (Process proc = new Process()) {
-        proc.StartInfo.CreateNoWindow = true;
-        proc.StartInfo.FileName = "sqlcmd.exe";
-        proc.StartInfo.Arguments = "-L";
-        proc.StartInfo.UseShellExecute = false;
-        proc.StartInfo.RedirectStandardOutput = true;
-        if (!debug) proc.Start();
-        output = debug ? $"\r\nServers:\r\n URAN\\LG\r\n MARS\\RFM\r\n" : proc.StandardOutput.ReadToEnd();
-      }
-      string[] serversStrings = output.Replace("Servers:", "").Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-      foreach (string s in serversStrings) {
-        string[] server = s.Split(new string[] { "\\" }, StringSplitOptions.None);
-        SqlInstance temp = (server.Length > 1 ? new SqlInstance(server[0], server[1]) : new SqlInstance(server[0]));
-        if (temp.Host != null) sqlInstances.Add(temp);
-      }
-
-      GetSqlStatus(ref sqlInstances);
-      List<SqlInstance> result = sqlInstances.Where(x => x.ServiceStatus == ServiceControllerStatus.Running).ToList();
-
-      return result;
-    }
-
-    private static void GetSqlStatus(ref List<SqlInstance> servers) {
-      ServiceController sc;
-      foreach (IGrouping<string, SqlInstance> server in servers.GroupBy(x => x.Host.FQDN)) {
-        SqlInstance srv = server.First();
-        if (srv.Host.Domain?.ToLower() == "formulabi.local") {
-          if (PingHost(srv.Host.FQDN, 500, out IPStatus status)) {
-            sc = new ServiceController();
-            sc.MachineName = srv.Host.FQDN;
-            foreach (SqlInstance service in server) {
-              service.ServerStatus = status;
-              sc.ServiceName = service.ServiceName;
-              try {
-                service.ServiceStatus = sc.Status;
-              }
-              catch (Exception e) {
-                service.Info = e.Message;
-              }
-            }
-          }
-          else {
-            foreach (SqlInstance service in server) {
-              service.ServerStatus = status;
-            }
-          }
-        }
-      }
-    }
-
-    public static DataTable GetSqlDataTable(string q, SqlConnection conn) {
-      DataTable dt = new DataTable();
-      SqlCommand command;
-      if (conn.State != ConnectionState.Open) conn.Open();
-      command = new SqlCommand(q, conn);
-      SqlDataReader r = command.ExecuteReader();
-      dt.Load(r);
-      return dt;
-    }
-
-    public static DataTable GetSqlDataTable(string q, string connectionString) {
-      DataTable dt = new DataTable();
-      SqlCommand command;
-      using (SqlConnection conn = new SqlConnection(connectionString)) {
-        conn.Open();
-        command = new SqlCommand(q, conn);
-        SqlDataReader r = command.ExecuteReader();
-        dt.Load(r);
-      }
-      return dt;
-    }
 
     public static bool PingHost(string nameOrAddress, int timeout, out IPStatus status) {
       status = IPStatus.Unknown;
@@ -102,29 +22,24 @@ namespace NewAdUser {
       return pingable;
     }
 
-    public static Dictionary<Domains.MailDomain, string> MailDomains = new Dictionary<Domains.MailDomain, string>();
-
-    public static bool addADUser(AdUser user, PSCredential credential) {
-      switch (user.domain) {
-        case Domains.AdDomain.Formulabi:
-          return AddFbiUser(user, credential);
-
-        case Domains.AdDomain Radarias:
-          return AddRadarUser(user, credential);
-
-        default:
-          return false;
+    public static void AddADUser(AdUser user, PSCredential credential, Splash splash = null) {
+      try {
+        posh.AddUser(user, credential, splash);
+      }
+      catch (Exception e) {
+        Console.WriteLine(e);
+        throw;
       }
     }
 
-    private static bool AddFbiUser(AdUser user, PSCredential credential) {
-      return false;
-    }
-
-    private static bool AddRadarUser(AdUser user, PSCredential credential) {
-      //posh.AddUser("dc01.radarias.local", credential, "Full Name Test", "OU=test,OU=Users,OU=radarias,DC=radarias,DC=local", "TestUser01", "ОтображаемоеИмя", "Имя", "Фамилия", "testuser@radarias.local");
-      posh.AddUser(user, "dc01.radarias.local", credential, "OU=test,OU=Users,OU=radarias,DC=radarias,DC=local");
-      return false;
+    public static void AddMailUser(AdUser user, PSCredential credential, Splash splash = null) {
+      try {
+        posh.AddMailUser(user, credential, splash);
+      }
+      catch (Exception e) {
+        Console.WriteLine(e);
+        throw;
+      }
     }
   }
 }

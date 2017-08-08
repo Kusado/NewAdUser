@@ -26,15 +26,16 @@ namespace NewAdUser {
     }
 
     private void SetupVars() {
+      //checkTrustedHosts();
       this.StartupSplash.Status = "Получаем список доменов";
-      this.comboBoxAdDomain.DataSource = Enum.GetValues(typeof(Domains.AdDomain));
+      this.comboBoxAdDomain.DataSource = Enum.GetValues(typeof(Domain.AdDomain));
       this.StartupSplash.Status = "Получаем список почтовых доменов";
-      this.comboBoxMailDomain.DataSource = Enum.GetValues(typeof(Domains.MailDomain));
+      this.comboBoxMailDomain.DataSource = Enum.GetValues(typeof(Domain.MailDomain));
       this.StartupSplash.Status = "Получаем список инстансов в сети";
 #if DEBUG
-      this.SqlInstances = Helpers.GetSqlServersFromNetwork(debug: true);
+      this.SqlInstances = SqlInstance.GetSqlServersFromNetwork(debug: true);
 #else
-       this.SqlInstances = Helpers.GetSqlServersFromNetwork(debug: false);
+       this.SqlInstances = SqlInstance.GetSqlServersFromNetwork(debug: false);
 #endif
       this.comboBoxInstances.DataSource = this.SqlInstances;
       this.comboBoxInstances.DisplayMember = "InstanceFullName";
@@ -44,6 +45,10 @@ namespace NewAdUser {
       checkBox1_CheckedChanged(null, null);
       checkBoxAddMail_CheckedChanged(null, null);
       this.TransType = Helpers.TransliterationType.Gost;
+    }
+
+    private void checkTrustedHosts() {
+      throw new NotImplementedException();
     }
 
     private void Form1_Load(object sender, EventArgs e) {
@@ -128,7 +133,8 @@ namespace NewAdUser {
     }
 
     private void checkBoxAddMail_CheckedChanged(object sender, EventArgs e) {
-      this.comboBoxMailDomain.Enabled = this.checkBoxPassword.Checked;
+      this.comboBoxMailDomain.Enabled = this.checkBoxAddMail.Checked;
+      this.checkBoxOnlyMail.Enabled = this.checkBoxAddMail.Checked;
     }
 
     private void Form1_Shown(object sender, EventArgs e) {
@@ -186,7 +192,7 @@ namespace NewAdUser {
     private List<Roles> GetRoles(SqlInstance instance) {
       List<Roles> result = new List<Roles>();
       string query = @"SELECT * FROM [KB].[dbo].[Roles]";
-      DataTable dt = Helpers.GetSqlDataTable(query, this.Sql);
+      DataTable dt = SqlInstance.GetSqlDataTable(query, this.Sql);
       try {
         result = dt.ToList<Roles>();
       }
@@ -200,7 +206,7 @@ namespace NewAdUser {
     private List<KBMenu> GetMenus(SqlInstance instance) {
       List<KBMenu> result = new List<KBMenu>();
       string query = @"SELECT * FROM [KB].[dbo].[Menu] where IdMenuType = 4";
-      DataTable dt = Helpers.GetSqlDataTable(query, this.Sql);
+      DataTable dt = SqlInstance.GetSqlDataTable(query, this.Sql);
       try {
         result = dt.ToList<KBMenu>();
       }
@@ -255,22 +261,54 @@ namespace NewAdUser {
     }
 
     private void buttonAddUser_Click(object sender, EventArgs e) {
-      string runasUsername = @"radarias\iabramov";
-      string runasPassword = "*********";
+      string runasUsername;
+      string runasPassword;
+      Splash splash = Splash.ShowSplash();
+      splash.Status = "Выбираем домены.";
+      switch ((Domain.AdDomain)this.comboBoxAdDomain.SelectedIndex) {
+        case Domain.AdDomain.Formulabi:
+          runasUsername = AccountDetails.FormulaLogin;
+          runasPassword = AccountDetails.FormulaPassword;
+          break;
 
+        case Domain.AdDomain.Radarias:
+          runasUsername = AccountDetails.RadarLogin;
+          runasPassword = AccountDetails.RadarPassword;
+          break;
+
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+      splash.Status = "Секурим пароли.";
       SecureString ssRunasPassword = new SecureString();
       foreach (char x in runasPassword) {
         ssRunasPassword.AppendChar(x);
       }
+      splash.Status = "Создаём учётные данные.";
       PSCredential credentials = new PSCredential(runasUsername, ssRunasPassword);
 
-      //AdUser NewUser = new AdUser(this.textBoxLogin.Text,this.textBoxLogin.Text + "@" + this.comboBoxDomain.SelectedItem,this.textBoxName.Text, this.textBoxSecondName.Text,this.textBoxSurName.Text);
+      splash.Status = "Генерим шаблон пользователя.";
 
-      AdUser NewUser = new AdUser(this.textBoxLogin.Text, this.textBoxName.Text, this.textBoxSecondName.Text, this.textBoxSurName.Text, (Domains.AdDomain)this.comboBoxAdDomain.SelectedIndex, (Domains.MailDomain)this.comboBoxMailDomain.SelectedIndex);
+      AdUser NewUser = new AdUser(this.textBoxLogin.Text, this.textBoxName.Text, this.textBoxSecondName.Text, this.textBoxSurName.Text, (Domain.AdDomain)this.comboBoxAdDomain.SelectedIndex, (Domain.MailDomain)this.comboBoxMailDomain.SelectedIndex);
 
-      if (!this.checkBoxPassword.Checked) NewUser.password = this.textBoxUserPassword.Text;
+      if (!this.checkBoxPassword.Checked) NewUser.Password = this.textBoxUserPassword.Text;
 
-      // Helpers.addADUser(NewUser, credentials);
+      splash.Status = "Начинаем создание пользователя.";
+      if (this.checkBoxOnlyMail.Enabled && !this.checkBoxOnlyMail.Checked) {
+        Helpers.AddADUser(NewUser, credentials, splash);
+      }
+
+      if (this.checkBoxAddMail.Checked) {
+        string ExchangeUsername = AccountDetails.FbiLogin;
+        string ExchangePassword = AccountDetails.FbiPassword;
+        SecureString SecExchangePassword = new SecureString();
+        foreach (char x in ExchangePassword) {
+          SecExchangePassword.AppendChar(x);
+        }
+        PSCredential ExchangeCreds = new PSCredential(ExchangeUsername, SecExchangePassword);
+        Helpers.AddMailUser(NewUser, ExchangeCreds, splash);
+      }
+      splash?.CloseSplash();
     }
   }
 }

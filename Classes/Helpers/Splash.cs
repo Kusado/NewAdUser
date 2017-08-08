@@ -7,7 +7,6 @@ namespace Helpers {
 
   public partial class Splash : Form {
     public Thread MyThread;
-    public bool LoadDefaults;
     private string _status;
 
     public string Status {
