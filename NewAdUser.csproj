@@ -54,6 +54,7 @@
     <Compile Include="Classes\DBClasses.cs" />
     <Compile Include="Classes\Domains.cs" />
     <Compile Include="Classes\DT2Class.cs" />
+    <Compile Include="Classes\Helpers\SqlInstance.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

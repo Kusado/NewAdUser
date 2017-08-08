@@ -12,7 +12,7 @@ namespace NewAdUser {
 
   public static partial class Helpers {
 
-    public static List<SqlInstance> GetSqlServersFromNetwork(bool test = false) {
+    public static List<SqlInstance> GetSqlServersFromNetwork(bool debug = false) {
       List<SqlInstance> sqlInstances = new List<SqlInstance>();
       string output;
       using (Process proc = new Process()) {
@@ -21,8 +21,8 @@ namespace NewAdUser {
         proc.StartInfo.Arguments = "-L";
         proc.StartInfo.UseShellExecute = false;
         proc.StartInfo.RedirectStandardOutput = true;
-        if (!test) proc.Start();
-        output = test ? $"\r\nServers:\r\n URAN\\LG\r\n MARS\\RFM\r\n" : proc.StandardOutput.ReadToEnd();
+        if (!debug) proc.Start();
+        output = debug ? $"\r\nServers:\r\n URAN\\LG\r\n MARS\\RFM\r\n" : proc.StandardOutput.ReadToEnd();
       }
       string[] serversStrings = output.Replace("Servers:", "").Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
       foreach (string s in serversStrings) {
@@ -65,33 +65,6 @@ namespace NewAdUser {
       }
     }
 
-    public class SqlInstance {
-      public NS.Host Host { get; set; }
-      public IPStatus ServerStatus { get; set; }
-      public string InstanceName { get; set; }
-      public string InstanceFullName { get { return ToString(); } }
-      public string ServiceName { get; set; }
-      public int ServerMemoryRunning { get; set; }
-      public int ServerMemoryMax { get; set; }
-      public int DatabasesSize { get; set; }
-      public string Info { get; set; }
-      public string Description { get; set; }
-      public ServiceControllerStatus ServiceStatus { get; set; }
-
-      public SqlInstance() {
-      }
-
-      public override string ToString() {
-        return this.Host.Name + "\\" + this.InstanceName;
-      }
-
-      public SqlInstance(string ServerName, string InstanceName = "DEFAULT") {
-        this.Host = NS.Host.GetHostEntry(ServerName.Replace(" ", ""));
-        this.InstanceName = InstanceName;
-        this.ServiceName = this.InstanceName == "DEFAULT" ? "MSSQLSERVER" : "MSSQL$" + this.InstanceName;
-      }
-    }
-
     public static DataTable GetSqlDataTable(string q, SqlConnection conn) {
       DataTable dt = new DataTable();
       SqlCommand command;
@@ -129,25 +102,14 @@ namespace NewAdUser {
       return pingable;
     }
 
-    //public enum AdDomain {
-    //  Formulabi = 0,
-    //  Radarias
-    //}
-
-    //public enum MailDomain {
-    //  Formulabi = 0,
-    //  Radar,
-    //  ExHelp
-    //}
-
     public static Dictionary<Domains.MailDomain, string> MailDomains = new Dictionary<Domains.MailDomain, string>();
 
     public static bool addADUser(AdUser user, PSCredential credential) {
       switch (user.domain) {
-        case Domains.ActiveDirectory.Formulabi:
+        case Domains.AdDomain.Formulabi:
           return AddFbiUser(user, credential);
 
-        case Domains.ActiveDirectory Radarias:
+        case Domains.AdDomain Radarias:
           return AddRadarUser(user, credential);
 
         default:

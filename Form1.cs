@@ -13,7 +13,7 @@ namespace NewAdUser {
   public partial class Form1 : Form {
     private const string DefaultPassword = "Zasqw12";
     private Helpers.TransliterationType TransType;
-    private List<Helpers.SqlInstance> SqlInstances;
+    private List<SqlInstance> SqlInstances;
     private Splash StartupSplash;
     private bool FormLoaded = false;
     private SqlConnection Sql;
@@ -27,11 +27,15 @@ namespace NewAdUser {
 
     private void SetupVars() {
       this.StartupSplash.Status = "Получаем список доменов";
-      this.comboBoxAdDomain.DataSource = Enum.GetValues(typeof(Domains.ActiveDirectory));
+      this.comboBoxAdDomain.DataSource = Enum.GetValues(typeof(Domains.AdDomain));
       this.StartupSplash.Status = "Получаем список почтовых доменов";
-      this.comboBoxMailDomain.DataSource = Enum.GetValues(typeof(Domains.ActiveDirectory));
+      this.comboBoxMailDomain.DataSource = Enum.GetValues(typeof(Domains.MailDomain));
       this.StartupSplash.Status = "Получаем список инстансов в сети";
-      this.SqlInstances = Helpers.GetSqlServersFromNetwork(test: true);
+#if DEBUG
+      this.SqlInstances = Helpers.GetSqlServersFromNetwork(debug: true);
+#else
+       this.SqlInstances = Helpers.GetSqlServersFromNetwork(debug: false);
+#endif
       this.comboBoxInstances.DataSource = this.SqlInstances;
       this.comboBoxInstances.DisplayMember = "InstanceFullName";
       this.comboBoxInstances.SelectedIndex = -1;
@@ -137,7 +141,7 @@ namespace NewAdUser {
     private void comboBoxInstances_SelectedIndexChanged(object sender, EventArgs e) {
       if (!this.FormLoaded) return;
       if (sender is ComboBox cmbx) {
-        Helpers.SqlInstance instance = cmbx.SelectedItem as Helpers.SqlInstance;
+        SqlInstance instance = cmbx.SelectedItem as SqlInstance;
 
         string ConnectionString = (instance.InstanceName == "DEFAULT") ? $@"Server={instance.Host.FQDN};Database=KB;Trusted_Connection=True;Connection Timeout=2;" : $@"Server={instance.InstanceFullName};Database=KB;Trusted_Connection=True;Connection Timeout=2;";
         if (this.Sql == null) this.Sql = new SqlConnection(ConnectionString);
@@ -179,7 +183,7 @@ namespace NewAdUser {
       }
     }
 
-    private List<Roles> GetRoles(Helpers.SqlInstance instance) {
+    private List<Roles> GetRoles(SqlInstance instance) {
       List<Roles> result = new List<Roles>();
       string query = @"SELECT * FROM [KB].[dbo].[Roles]";
       DataTable dt = Helpers.GetSqlDataTable(query, this.Sql);
@@ -193,7 +197,7 @@ namespace NewAdUser {
       return result;
     }
 
-    private List<KBMenu> GetMenus(Helpers.SqlInstance instance) {
+    private List<KBMenu> GetMenus(SqlInstance instance) {
       List<KBMenu> result = new List<KBMenu>();
       string query = @"SELECT * FROM [KB].[dbo].[Menu] where IdMenuType = 4";
       DataTable dt = Helpers.GetSqlDataTable(query, this.Sql);
@@ -222,7 +226,7 @@ namespace NewAdUser {
     private void ButtonAddKbUser_Click(object sender, EventArgs e) {
       if (!(this.listBoxRoles.SelectedItems.Count > 0 && this.listBoxMenu.SelectedItems.Count > 0)) { MessageBox.Show("Надо выбрать хотябы одну роль и меню.", "Внимание!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); return; }
       string s = String.Empty;
-      s += $"Добавляем пользователя {this.textBoxLogin.Text}@{this.comboBoxAdDomain.Text} на сервере {((Helpers.SqlInstance)this.comboBoxInstances.SelectedItem).InstanceFullName}{Environment.NewLine}";
+      s += $"Добавляем пользователя {this.textBoxLogin.Text}@{this.comboBoxAdDomain.Text} на сервере {((SqlInstance)this.comboBoxInstances.SelectedItem).InstanceFullName}{Environment.NewLine}";
       s += "Даём ему роль:";
       foreach (Roles item in this.listBoxRoles.SelectedItems) {
         s += $"{item.RoleName},{Environment.NewLine}";
@@ -262,11 +266,11 @@ namespace NewAdUser {
 
       //AdUser NewUser = new AdUser(this.textBoxLogin.Text,this.textBoxLogin.Text + "@" + this.comboBoxDomain.SelectedItem,this.textBoxName.Text, this.textBoxSecondName.Text,this.textBoxSurName.Text);
 
-      AdUser NewUser = new AdUser(this.textBoxLogin.Text, this.textBoxName.Text, this.textBoxSecondName.Text, this.textBoxSurName.Text, (Domains.ActiveDirectory)this.comboBoxAdDomain.SelectedIndex);
+      AdUser NewUser = new AdUser(this.textBoxLogin.Text, this.textBoxName.Text, this.textBoxSecondName.Text, this.textBoxSurName.Text, (Domains.AdDomain)this.comboBoxAdDomain.SelectedIndex, (Domains.MailDomain)this.comboBoxMailDomain.SelectedIndex);
 
       if (!this.checkBoxPassword.Checked) NewUser.password = this.textBoxUserPassword.Text;
 
-      Helpers.addADUser(NewUser, credentials);
+      // Helpers.addADUser(NewUser, credentials);
     }
   }
 }
